@@ -19,6 +19,90 @@
 	on_hit(atom/hit, direction, projectile)
 		return
 
+	/datum/projectile/special/spreader/howitzers
+	name = "plasma howitzer"
+	sname = "plasma howitzer"
+	icon = 'icons/obj/32x96.dmi'
+	icon_state = "howitzer-shot"
+	shot_sound = 'sound/weapons/energy/howitzer_shot.ogg'
+	shot_number = 1
+	cost = 1
+	power = 80
+	pellets_to_fire = 1
+	spread_projectile_type = /datum/projectile/special/howitzer/weak
+	max_range = 5
+	split_type = 2
+	pierces = -1
+	goes_through_walls = 1
+	shot_sound = 'sound/weapons/Taser.ogg'
+	hit_mob_sound = 'sound/effects/sparks6.ogg'
+	var/spread_angle = 0
+	var/current_angle = 0
+	var/angle_adjust_per_pellet = 0
+	var/initial_angle_offset_mult = 0
+
+	new_pellet(var/obj/projectile/P, var/turf/PT, var/datum/projectile/F)
+		var/obj/projectile/FC = initialize_projectile(PT, F, P.xo, P.yo, P.shooter)
+		FC.rotateDirection(current_angle)
+		FC.launch()
+		current_angle += angle_adjust_per_pellet
+
+/datum/projectile/special/howitzer/weak
+	name = "plasma howitzer"
+	sname = "plasma howitzer"
+	icon = 'icons/obj/32x96.dmi'
+	icon_state = "howitzer-shot"
+	shot_sound = 'sound/weapons/energy/howitzer_shot.ogg'
+	power = 1000 // blam = INF
+	cost = 2500
+	damage_type = D_BURNING
+	dissipation_delay = 0
+	dissipation_rate = 0
+	ks_ratio = 0.8
+	brightness = 2
+	projectile_speed = 28
+	impact_range = 32
+	caliber = 40
+	pierces = -1
+	goes_through_walls = 1
+	color_red = 1
+	color_green = 1
+	color_blue = 0
+	max_range = 12
+	var/burn_range = 1
+	var/blast_size = 2
+	var/temperature = 5000
+	var/impacted = 0
+
+	tick(var/obj/projectile/P)
+		var/T1 = get_turf(P)
+		if((!istype(T1,/turf/space))) // so uh yeah this will be pretty mean
+			fireflash_sm(T1, burn_range, temperature)
+			new /obj/effects/explosion/dangerous(get_step(P.loc,P.dir))
+
+
+
+	on_launch(var/obj/projectile/P)
+		for(var/mob/M in range(P.loc, 6))
+			shake_camera(M, 3, 1)
+
+
+	on_hit(var/atom/A)
+		var/turf/T = get_turf(A)
+		if(prob(10))
+			playsound(A, "sound/effects/ExplosionFirey.ogg", 60, 1)
+		if(!impacted)
+			world << sound('sound/weapons/energy/howitzer_impact.ogg', volume = 70)
+			impacted = 1
+			SPAWN_DBG(1 DECI SECOND)
+				for(var/mob/living/M in mobs)
+					shake_camera(M, 2, 1)
+
+		SPAWN_DBG(0)
+			explosion_new(null, T, 10, 2)
+		if(prob(10))
+			world << sound('sound/effects/creaking_metal1.ogg', volume = 60)
+
 /datum/projectile/special/kiss
 	name = "kiss"
 	icon_state = "kiss"

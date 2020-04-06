@@ -472,7 +472,7 @@
 	update_icon()
 		if (src.cell)
 			var/ratio = min(1, src.cell.charge / src.cell.max_charge)
-			ratio = round(ratio, 0.25) * 100	
+			ratio = round(ratio, 0.25) * 100
 			if(current_projectile.type == /datum/projectile/wavegun)
 				src.icon_state = "wavegun[ratio]"
 				item_state = "wave"
@@ -1132,8 +1132,8 @@
 	can_swap_cell = 0
 
 	New(var/mob/M)
-		cell = new/obj/item/ammo/power_cell/self_charging/lawgiver
-		current_projectile = new/datum/projectile/energy_bolt/aoe
+		cell = new/obj/item/ammo/power_cell/self_charging/big
+		current_projectile = new/datum/projectile/special/shock_orb
 		projectiles = list("detain" = current_projectile, "execute" = new/datum/projectile/bullet/revolver_38, "smokeshot" = new/datum/projectile/bullet/smoke, "knockout" = new/datum/projectile/bullet/tranq_dart/law_giver, "hotshot" = new/datum/projectile/bullet/flare, "bigshot" = new/datum/projectile/bullet/aex/lawgiver, "clownshot" = new/datum/projectile/bullet/clownshot, "pulse" = new/datum/projectile/energy_bolt/pulse)
 		// projectiles = list(current_projectile,new/datum/projectile/bullet/revolver_38,new/datum/projectile/bullet/smoke,new/datum/projectile/bullet/tranq_dart/law_giver,new/datum/projectile/bullet/flare,new/datum/projectile/bullet/aex/lawgiver,new/datum/projectile/bullet/clownshot)
 
@@ -1195,7 +1195,7 @@
 
 		if(!src.projectiles && !src.projectiles.len > 1)
 			boutput(M, "<span style=\"color:blue\">Gun broke. Call 1-800-CODER.</span>")
-			current_projectile = new/datum/projectile/energy_bolt/aoe
+			current_projectile = new/datum/projectile/special/shock_orb
 			item_state = "lawg-detain"
 			M.update_inhands()
 			update_icon()
@@ -1290,7 +1290,7 @@
 				return
 			indicator_display.icon_state = "[old ? "old-" : ""]lawgiver-d[ratio]"
 
-			if(current_projectile.type == /datum/projectile/energy_bolt/aoe)			//detain - yellow
+			if(current_projectile.type == /datum/projectile/special/shock_orb)			//detain - yellow
 				indicator_display.color = "#FFFF00"
 			else if (current_projectile.type == /datum/projectile/bullet/revolver_38)			//execute - cyan
 				indicator_display.color = "#00FFFF"
@@ -1363,7 +1363,7 @@
 	get_desc()
 		set src in usr
 		var/gun_setting_name = "detain"
-		if(current_projectile.type == /datum/projectile/energy_bolt/aoe)
+		if(current_projectile.type == /datum/projectile/special/shock_orb)
 			gun_setting_name = "detain"
 		else if (current_projectile.type == /datum/projectile/bullet/revolver_38)
 			gun_setting_name = "execute"
